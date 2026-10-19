@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>i-Exchange — No money, no problem.</title>
+  <meta name="description" content="i-Exchange is a Slovenian marketplace for swapping items. Trade what you don't need for what you do, and balance the difference with tokens.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+  <!-- Set the theme before the page paints, so there is no light/dark flash.
+       Saved choice wins; otherwise follow the system setting. -->
+  <script>
+    (function () {
+      var saved = null;
+      try { saved = localStorage.getItem('ix-theme'); } catch (e) {}
+      var theme = saved === 'light' || saved === 'dark'
+        ? saved
+        : (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.classList.add('js');
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Icon sprite: every icon on the page is a <use href="#i-..."> pointing here. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+      <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 4 3 8l4 4"/><path d="M3 8h14"/><path d="m17 20 4-4-4-4"/><path d="M21 16H7"/></symbol>
+      <symbol id="i-package" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5V8z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/></symbol>
+      <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></symbol>
+      <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 2-1.6L22 7H6"/></symbol>
+      <symbol id="i-trend" viewBox="0 0 24 24"><path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/></symbol>
+      <symbol id="i-bag" viewBox="0 0 24 24"><path d="M6 7h12l1 14H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.2a5 5 0 0 1 5 4.8"/></symbol>
+      <symbol id="i-truck" viewBox="0 0 24 24"><path d="M3 6h11v10H3z"/><path d="M14 9h4l3 3v4h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></symbol>
+      <symbol id="i-locker" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18M3 9h9M3 15h9M12 12h9"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3z"/><path d="m9 12 2 2 4-4"/></symbol>
+      <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h8.5a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7H16"/></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3z"/></symbol>
+      <symbol id="i-badge" viewBox="0 0 24 24"><path d="m12 2.5 2.4 1.8 3-.2.9 2.9 2.5 1.7-1 2.8 1 2.8-2.5 1.7-.9 2.9-3-.2-2.4 1.8-2.4-1.8-3 .2-.9-2.9-2.5-1.7 1-2.8-1-2.8 2.5-1.7.9-2.9 3 .2z"/><path d="m9 12 2 2 4-4"/></symbol>
+      <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></symbol>
+      <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></symbol>
+      <symbol id="i-shirt" viewBox="0 0 24 24"><path d="M8 3 3 6l2 5 2-1v11h10V10l2 1 2-5-5-3a4 4 0 0 1-8 0z"/></symbol>
+      <symbol id="i-laptop" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></symbol>
+      <symbol id="i-bike" viewBox="0 0 24 24"><circle cx="5.5" cy="16" r="3.5"/><circle cx="18.5" cy="16" r="3.5"/><path d="M5.5 16 9 9h7l2.5 7"/><path d="M9 9l3.5 7h-7"/><path d="M8 6h3"/><path d="M16 9l-1-3h2"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h14v14H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 0 2 2h14v-4"/></symbol>
+      <symbol id="i-toy" viewBox="0 0 24 24"><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/><rect x="8" y="3" width="8" height="8" rx="1.5"/></symbol>
+      <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+      <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></symbol>
+      <symbol id="i-plant" viewBox="0 0 24 24"><path d="M6 14h12l-1.5 7h-9z"/><path d="M12 14V8"/><path d="M12 9c0-3 2-5 5-5 0 3-2 5-5 5z"/><path d="M12 11c0-2.5-1.7-4-4-4 0 2.5 1.7 4 4 4z"/></symbol>
+      <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 4 13c0-6 6-9 16-9 0 10-3 16-9 16z"/><path d="M4 21c3-5 6-8 10-10"/></symbol>
+      <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h13v4"/><path d="M3 7v11a2 2 0 0 0 2 2h15V9H5a2 2 0 0 1-2-2z"/><circle cx="16" cy="14.5" r="1.2"/></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a4.8 4.8 0 0 1 9-3 4.8 4.8 0 0 1 9 3c-2 4.6-9 9-9 9z"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+      <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+      <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18h2"/></symbol>
+      <symbol id="i-id" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16a3 3 0 0 1 6 0M15 10h3M15 14h3"/></symbol>
+      <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13"/><path d="M12 8S10.5 3 8 3.5 7.5 8 12 8zm0 0s1.5-5 4-4.5S16.5 8 12 8z"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+    </defs>
+  </svg>
+
+  <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
+
+  <!-- 1. HEADER -->
+  <header class="site-header" id="top">
+    <div class="container header-inner">
+      <a class="logo" href="#top" aria-label="i-Exchange">
+        <span class="logo-i">i</span><span class="logo-dash">-</span>Exchange
+      </a>
+
+      <div class="header-actions">
+        <div class="lang-switch" role="group" data-i18n-aria-label="a11y.language" aria-label="Language">
+          <button type="button" class="lang-btn" data-lang="en" aria-pressed="true">EN</button>
+          <button type="button" class="lang-btn" data-lang="sl" aria-pressed="false">SL</button>
+        </div>
+
+        <button type="button" class="icon-btn" id="theme-toggle" data-i18n-aria-label="a11y.theme" aria-label="Toggle dark mode">
+          <svg class="icon icon-sun"><use href="#i-sun"/></svg>
+          <svg class="icon icon-moon"><use href="#i-moon"/></svg>
+        </button>
+
+        <a class="btn btn-primary btn-sm header-cta" href="#waitlist" data-join>
+          <span class="cta-long" data-i18n="header.cta">Join the waitlist</span>
+          <span class="cta-short" data-i18n="header.ctaShort">Join</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- 2. HERO -->
+    <section class="hero">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="pill"><svg class="icon"><use href="#i-pin"/></svg><span data-i18n="hero.badge">Coming soon to Slovenia</span></p>
+          <h1 class="hero-title" data-i18n="hero.title">No money, no problem.</h1>
+          <p class="hero-sub" data-i18n="hero.sub">Swap the things you don't need for the things you do — and balance any difference with tokens instead of cash.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="#waitlist" data-join>
+              <span data-i18n="hero.cta">Join the waitlist</span>
+              <svg class="icon"><use href="#i-arrow"/></svg>
+            </a>
+            <p class="hero-bonus">
+              <span class="coin coin-lg" aria-hidden="true"></span>
+              <span data-i18n="hero.bonus">Get 10 free tokens at launch</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Decorative mini-trade in the hero -->
+        <div class="hero-visual" aria-hidden="true">
+          <div class="mini-card mini-a">
+            <div class="mini-img tone-blue"><svg class="icon"><use href="#i-laptop"/></svg></div>
+            <div class="mini-body">
+              <span class="mini-title" data-i18n="hero.visA">Used laptop</span>
+              <span class="tok"><span class="coin"></span>80</span>
+            </div>
+          </div>
+          <div class="swap-badge"><svg class="icon"><use href="#i-swap"/></svg></div>
+          <div class="mini-card mini-b">
+            <div class="mini-img tone-mint"><svg class="icon"><use href="#i-camera"/></svg></div>
+            <div class="mini-body">
+              <span class="mini-title" data-i18n="hero.visB">Film camera</span>
+              <span class="tok"><span class="coin"></span>60 <em class="plus-tok">+20</em></span>
+            </div>
+          </div>
+          <div class="toast">
+            <svg class="icon"><use href="#i-check"/></svg>
+            <span data-i18n="hero.visToast">Trade accepted</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. HOW IT WORKS -->
+    <section class="section" id="how">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow" data-i18n="how.eyebrow">How it works</p>
+          <h2 data-i18n="how.title">Four steps from clutter to swap</h2>
+        </div>
+        <ol class="steps">
+          <li class="step reveal">
+            <span class="step-num">1</span>
+            <span class="icon-tile"><svg class="icon"><use href="#i-camera"/></svg></span>
+            <h3 data-i18n="how.s1t">Post your item</h3>
+            <p data-i18n="how.s1d">Snap a photo, add a short description and set its value in tokens.</p>
+          </li>
+          <li class="step reveal">
+            <span class="step-num">2</span>
+            <span class="icon-tile"><svg class="icon"><use href="#i-search"/></svg></span>
+            <h3 data-i18n="how.s2t">Find something you need</h3>
+            <p data-i18n="how.s2d">Browse by category or city and spot what you've been looking for.</p>
+          </li>
+          <li class="step reveal">
+            <span class="step-num">3</span>
+            <span class="icon-tile"><svg class="icon"><use href="#i-swap"/></svg></span>
+            <h3 data-i18n="how.s3t">Offer an exchange</h3>
+            <p data-i18n="how.s3d">Offer one or more of your items and add tokens to balance the value.</p>
+          </li>
+          <li class="step reveal">
+            <span class="step-num">4</span>
+            <span class="icon-tile"><svg class="icon"><use href="#i-package"/></svg></span>
+            <h3 data-i18n="how.s4t">Meet up or ship, confirm, rate</h3>
+            <p data-i18n="how.s4d">Swap in person or by parcel, confirm you got your item, and rate each other.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 4. EXAMPLE TRADE CARD -->
+    <section class="section section-tint" id="example">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow" data-i18n="ex.eyebrow">Example trade</p>
+          <h2 data-i18n="ex.title">Values don't match? Tokens make it fair.</h2>
+        </div>
+
+        <div class="trade-card reveal">
+          <div class="trade-row">
+            <div class="trade-side">
+              <p class="trade-label" data-i18n="ex.offer">Maja's offer</p>
+              <div class="trade-items">
+                <div class="trade-tile">
+                  <div class="tile-img tone-peach"><svg class="icon"><use href="#i-book"/></svg></div>
+                  <span class="tile-name" data-i18n="ex.books">Books bundle</span>
+                  <span class="tok tok-lg"><span class="coin"></span>50</span>
+                </div>
+                <span class="op" aria-hidden="true">+</span>
+                <div class="trade-tile">
+                  <div class="tile-img tone-gold"><span class="coin coin-xl"></span></div>
+                  <span class="tile-name" data-i18n="ex.tokens">Tokens</span>
+                  <span class="tok tok-lg"><span class="coin"></span>50</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="trade-arrow" aria-hidden="true">
+              <span class="op op-eq">=</span>
+            </div>
+
+            <div class="trade-side">
+              <p class="trade-label" data-i18n="ex.listing">Luka's listing</p>
+              <div class="trade-items">
+                <div class="trade-tile tile-target">
+                  <div class="tile-img tone-blue"><svg class="icon"><use href="#i-bike"/></svg></div>
+                  <span class="tile-name" data-i18n="ex.bike">Bicycle</span>
+                  <span class="tok tok-lg"><span class="coin"></span>100</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Balance bar: 50 (books) + 50 (tokens) fills to 100 -->
+          <div class="balance" aria-hidden="true">
+            <div class="balance-bar">
+              <span class="seg seg-items">50</span>
+              <span class="seg seg-tokens">50</span>
+            </div>
+          </div>
+          <p class="balance-total" data-i18n="ex.total">50 + 50 = 100 tokens. A fair trade.</p>
+
+          <p class="trade-caption" data-i18n="ex.caption">Maja wants Luka's bicycle (100 tokens). She offers a stack of books worth 50 tokens and adds 50 tokens to even it out. Luka accepts — no cash involved.</p>
+          <p class="trade-status">
+            <svg class="icon"><use href="#i-lock"/></svg>
+            <span data-i18n="ex.status">The 50 tokens are held safely until both confirm they received their item.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. TOKENS -->
+    <section class="section" id="tokens">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow" data-i18n="tok.eyebrow">Tokens</p>
+          <h2 data-i18n="tok.title">Tokens, simply explained</h2>
+          <p class="lead" data-i18n="tok.lead">1 token ≈ 1 EUR. They make uneven trades fair.</p>
+        </div>
+
+        <div class="cards-3">
+          <article class="card reveal">
+            <span class="icon-tile"><svg class="icon"><use href="#i-cart"/></svg></span>
+            <h3 data-i18n="tok.buyT">Buy</h3>
+            <p data-i18n="tok.buyD">Top up whenever you need a few extra tokens to close a deal.</p>
+          </article>
+          <article class="card reveal">
+            <span class="icon-tile"><svg class="icon"><use href="#i-trend"/></svg></span>
+            <h3 data-i18n="tok.earnT">Earn by trading</h3>
+            <p data-i18n="tok.earnD">Receive tokens when someone adds them to an offer for your item.</p>
+          </article>
+          <article class="card reveal">
+            <span class="icon-tile"><svg class="icon"><use href="#i-bag"/></svg></span>
+            <h3 data-i18n="tok.spendT">Spend</h3>
+            <p data-i18n="tok.spendD">Use them on any listing — or to pay for your shipping.</p>
+          </article>
+        </div>
+
+        <div class="token-notes">
+          <div class="note note-info reveal">
+            <svg class="icon"><use href="#i-lock"/></svg>
+            <p data-i18n="tok.noCash">Tokens stay inside i-Exchange and can't be cashed out. That keeps it about swapping, not selling.</p>
+          </div>
+          <div class="note note-gift reveal">
+            <svg class="icon"><use href="#i-gift"/></svg>
+            <p data-i18n="tok.starter">New here? Verify your phone number and get 10 free starter tokens.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. MEETUP OR SHIPPING -->
+    <section class="section section-tint" id="delivery">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow" data-i18n="del.eyebrow">Delivery</p>
+          <h2 data-i18n="del.title">Meet up or ship it</h2>
+          <p class="lead" data-i18n="del.lead">Every listing shows whether it's available for meetup, shipping, or both.</p>
+        </div>
+
+        <div class="cards-2">
+          <article class="card card-lg reveal">
+            <span class="icon-tile"><svg class="icon"><use href="#i-users"/></svg></span>
+            <h3 data-i18n="del.meetT">Meetup</h3>
+            <p data-i18n="del.meetD">Agree on a time and place, check the item, and swap on the spot.</p>
+          </article>
+          <article class="card card-lg reveal">
+            <span class="icon-tile"><svg class="icon"><use href="#i-truck"/></svg></span>
+            <h3 data-i18n="del.shipT">Shipping</h3>
+            <p data-i18n="del.shipD">Send it anywhere in Slovenia. Each person pays to ship their own item — in euros or tokens.</p>
+            <ul class="carriers" aria-label="Carriers">
+              <li class="carrier">Pošta Slovenije</li>
+              <li class="carrier">GLS</li>
+              <li class="carrier">DPD</li>
+              <li class="carrier">Packeta</li>
+            </ul>
+            <p class="locker-note">
+              <svg class="icon"><use href="#i-locker"/></svg>
+              <span data-i18n="del.lockers">Parcel lockers supported</span>
+            </p>
+          </article>
+        </div>
+        <p class="center-note reveal">
+          <svg class="icon"><use href="#i-pin"/></svg>
+          <span data-i18n="del.slovenia">Available in Slovenia only, for now.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- 7. TRUST & SAFETY -->
+    <section class="section section-trust" id="trust">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow" data-i18n="trust.eyebrow">Trust &amp; safety</p>
+          <h2 data-i18n="trust.title">Built so every trade feels safe</h2>
+          <p class="lead" data-i18n="trust.lead">Swapping with strangers should feel like swapping with neighbours. Here's how we make sure it does.</p>
+        </div>
+
+        <div class="trust-grid">
+          <article class="trust-item trust-feature reveal">
+            <span class="icon-tile icon-tile-strong"><svg class="icon"><use href="#i-shield"/></svg></span>
+            <div>
+              <h3 data-i18n="trust.t1">Token protection</h3>
+              <p data-i18n="trust.d1">Tokens in an offer are held by i-Exchange and only released when both of you confirm you've received your item.</p>
+            </div>
+          </article>
+          <article class="trust-item reveal">
+            <span class="icon-tile"><svg class="icon"><use href="#i-route"/></svg></span>
+            <div>
+              <h3 data-i18n="trust.t2">Tracking numbers required</h3>
+              <p data-i18n="trust.d2">Every shipped trade needs a tracking number, so you always know where your parcel is.</p>
+            </div>
+          </article>
+          <article class="trust-item reveal">
+            <span class="icon-tile"><svg class="icon"><use href="#i-star"/></svg></span>
+            <div>
+              <h3 data-i18n="trust.t3">Ratings from real trades</h3>
+              <p data-i18n="trust.d3">After every completed exchange, you rate each other. Only real trades can be rated.</p>
+            </div>
+          </article>
+          <article class="trust-item reveal">
+            <span class="icon-tile"><svg class="icon"><use href="#i-badge"/></svg></span>
+            <div>
+              <h3 data-i18n="trust.t4">Verified profiles</h3>
+              <p data-i18n="trust.d4">Verify your email, phone and ID step by step to earn the Trusted trader badge.</p>
+              <ol class="levels">
+                <li><svg class="icon"><use href="#i-mail"/></svg><span data-i18n="trust.lvEmail">Email</span></li>
+                <li><svg class="icon"><use href="#i-phone"/></svg><span data-i18n="trust.lvPhone">Phone</span></li>
+                <li><svg class="icon"><use href="#i-id"/></svg><span data-i18n="trust.lvId">ID</span></li>
+                <li class="level-final"><svg class="icon"><use href="#i-badge"/></svg><span data-i18n="trust.lvTrusted">Trusted trader</span></li>
+              </ol>
+            </div>
+          </article>
+          <article class="trust-item reveal">
+            <span class="icon-tile"><svg class="icon"><use href="#i-flag"/></svg></span>
+            <div>
+              <h3 data-i18n="trust.t5">Report, block &amp; disputes</h3>
+              <p data-i18n="trust.d5">Report or block any user or listing. If an item doesn't arrive or isn't as described, open a dispute.</p>
+            </div>
+          </article>
+          <article class="trust-item reveal">
+            <span class="icon-tile"><svg class="icon"><use href="#i-history"/></svg></span>
+            <div>
+              <h3 data-i18n="trust.t6">Trade history on every profile</h3>
+              <p data-i18n="trust.d6">See anyone's track record at a glance — like “23 successful exchanges”.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. CATEGORIES -->
+    <section class="section" id="categories">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow" data-i18n="cat.eyebrow">Categories</p>
+          <h2 data-i18n="cat.title">Swap almost anything</h2>
+        </div>
+        <ul class="categories">
+          <li class="cat reveal"><span class="cat-icon tone-blue"><svg class="icon"><use href="#i-shirt"/></svg></span><span data-i18n="cat.clothing">Clothing</span></li>
+          <li class="cat reveal"><span class="cat-icon tone-mint"><svg class="icon"><use href="#i-laptop"/></svg></span><span data-i18n="cat.electronics">Electronics</span></li>
+          <li class="cat reveal"><span class="cat-icon tone-peach"><svg class="icon"><use href="#i-home"/></svg></span><span data-i18n="cat.home">Home &amp; Garden</span></li>
+          <li class="cat reveal"><span class="cat-icon tone-blue"><svg class="icon"><use href="#i-bike"/></svg></span><span data-i18n="cat.sports">Sports &amp; Bikes</span></li>
+          <li class="cat reveal"><span class="cat-icon tone-lilac"><svg class="icon"><use href="#i-book"/></svg></span><span data-i18n="cat.books">Books &amp; Media</span></li>
+          <li class="cat reveal"><span class="cat-icon tone-gold"><svg class="icon"><use href="#i-toy"/></svg></span><span data-i18n="cat.kids">Kids &amp; Toys</span></li>
+          <li class="cat reveal"><span class="cat-icon tone-mint"><svg class="icon"><use href="#i-wrench"/></svg></span><span data-i18n="cat.tools">Tools</span></li>
+          <li class="cat reveal"><span class="cat-icon tone-lilac"><svg class="icon"><use href="#i-grid"/></svg></span><span data-i18n="cat.other">Other</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 9. EXAMPLE LISTINGS (cards are rendered by script.js) -->
+    <section class="section section-tint" id="listings">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow" data-i18n="list.eyebrow">Sneak peek</p>
+          <h2 data-i18n="list.title">What swapping will look like</h2>
+          <p class="lead disclaimer" data-i18n="list.note">Example listings only — the items, people and ratings below are fictional.</p>
+        </div>
+        <div class="listings" id="listings-grid"></div>
+      </div>
+    </section>
+
+    <!-- 10. WHY -->
+    <section class="section" id="why">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow" data-i18n="why.eyebrow">Why i-Exchange</p>
+          <h2 data-i18n="why.title">Good for you, your wallet and the planet</h2>
+        </div>
+        <div class="cards-3">
+          <article class="card why-card reveal">
+            <span class="icon-tile tone-mint"><svg class="icon"><use href="#i-leaf"/></svg></span>
+            <h3 data-i18n="why.t1">Reuse, don't throw away</h3>
+            <p data-i18n="why.d1">Give the things in your cupboard a second life instead of sending them to the landfill.</p>
+          </article>
+          <article class="card why-card reveal">
+            <span class="icon-tile tone-gold"><svg class="icon"><use href="#i-wallet"/></svg></span>
+            <h3 data-i18n="why.t2">Get what you need, keep your money</h3>
+            <p data-i18n="why.d2">Trade for what you need using things you already own.</p>
+          </article>
+          <article class="card why-card reveal">
+            <span class="icon-tile tone-peach"><svg class="icon"><use href="#i-heart"/></svg></span>
+            <h3 data-i18n="why.t3">A community you can trust</h3>
+            <p data-i18n="why.d3">Verified profiles, real ratings and protected tokens make every trade feel safe.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. FAQ -->
+    <section class="section section-tint" id="faq">
+      <div class="container container-narrow">
+        <div class="section-head reveal">
+          <p class="eyebrow" data-i18n="faq.eyebrow">FAQ</p>
+          <h2 data-i18n="faq.title">Questions, answered</h2>
+        </div>
+        <div class="faq">
+          <details class="reveal"><summary data-i18n="faq.q1">What are tokens?</summary><p data-i18n="faq.a1">Tokens are i-Exchange's in-app value. 1 token is roughly 1 EUR. You use them to balance trades when items aren't worth the same, and to pay for shipping.</p></details>
+          <details class="reveal"><summary data-i18n="faq.q2">Can I cash out tokens?</summary><p data-i18n="faq.a2">No. Tokens can only be spent inside i-Exchange — on trades or shipping. That keeps the platform about exchanging, not selling.</p></details>
+          <details class="reveal"><summary data-i18n="faq.q3">Is it free to join?</summary><p data-i18n="faq.a3">Yes, joining is free. Verify your phone number and you'll also get 10 starter tokens to make your first trade easier.</p></details>
+          <details class="reveal"><summary data-i18n="faq.q4">How does shipping work?</summary><p data-i18n="faq.a4">If a listing offers shipping, each of you sends your own item with Pošta Slovenije, GLS, DPD or a Packeta parcel locker and adds the tracking number. Each person pays for their own parcel — in euros or tokens.</p></details>
+          <details class="reveal"><summary data-i18n="faq.q5">What if something goes wrong?</summary><p data-i18n="faq.a5">Tokens in an offer stay protected until both sides confirm delivery. If an item doesn't arrive or isn't as described, open a dispute and we'll step in. You can also report or block any user or listing.</p></details>
+          <details class="reveal"><summary data-i18n="faq.q6">Where does it work?</summary><p data-i18n="faq.a6">In Slovenia only, for now — anywhere in the country, with meetups or shipping.</p></details>
+          <details class="reveal"><summary data-i18n="faq.q7">When does it launch?</summary><p data-i18n="faq.a7">We're getting ready to launch in Slovenia soon. Join the waitlist and we'll email you the moment we go live.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. WAITLIST -->
+    <section class="section section-waitlist" id="waitlist">
+      <div class="container">
+        <div class="waitlist-card reveal">
+          <div class="waitlist-copy">
+            <p class="eyebrow eyebrow-light" data-i18n="wl.eyebrow">Waitlist</p>
+            <h2 data-i18n="wl.title">Be first in line</h2>
+            <p data-i18n="wl.sub">Join the waitlist and get 10 free tokens when i-Exchange launches.</p>
+            <p class="wl-count" id="wl-count" hidden>
+              <span class="pulse" aria-hidden="true"></span>
+              <span id="wl-count-text"></span>
+            </p>
+          </div>
+
+          <form class="waitlist-form" id="waitlist-form" novalidate>
+            <div class="field">
+              <label for="wl-email" data-i18n="form.email">Email</label>
+              <input id="wl-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" required
+                     data-i18n-placeholder="form.emailPh" placeholder="you@example.com">
+            </div>
+
+            <div class="field">
+              <label for="wl-city" data-i18n="form.city">City</label>
+              <select id="wl-city" name="city" required>
+                <option value="" data-i18n="form.cityPh">Choose your city</option>
+                <option value="Ljubljana">Ljubljana</option>
+                <option value="Maribor">Maribor</option>
+                <option value="Celje">Celje</option>
+                <option value="Kranj">Kranj</option>
+                <option value="Koper">Koper</option>
+                <option value="Velenje">Velenje</option>
+                <option value="Novo mesto">Novo mesto</option>
+                <option value="Ptuj">Ptuj</option>
+                <option value="Murska Sobota">Murska Sobota</option>
+                <option value="Nova Gorica">Nova Gorica</option>
+                <option value="Domžale">Domžale</option>
+                <option value="Kamnik">Kamnik</option>
+                <option value="Jesenice">Jesenice</option>
+                <option value="Škofja Loka">Škofja Loka</option>
+                <option value="Other" data-i18n="form.cityOther">Other</option>
+              </select>
+            </div>
+
+            <!-- Honeypot: hidden from people, bots tend to fill it in. -->
+            <div class="hp" aria-hidden="true">
+              <label for="wl-website">Website</label>
+              <input id="wl-website" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+
+            <label class="consent">
+              <input type="checkbox" id="wl-consent" name="consent" required>
+              <span data-i18n="form.consent">I agree that i-Exchange may store my email and city to let me know when it launches.</span>
+            </label>
+            <p class="privacy" data-i18n="form.privacy">We only use this to contact you about i-Exchange. No spam, never shared, and you can ask us to delete it at any time.</p>
+
+            <button type="submit" class="btn btn-primary btn-lg btn-block" id="wl-submit">
+              <span id="wl-submit-text" data-i18n="form.submit">Join the waitlist</span>
+            </button>
+            <p class="form-msg" id="wl-msg" role="status" aria-live="polite" hidden></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 13. FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a class="logo logo-sm" href="#top" aria-label="i-Exchange">
+        <span class="logo-i">i</span><span class="logo-dash">-</span>Exchange
+      </a>
+      <p class="footer-motto" data-i18n="footer.launch">Launching in Slovenia</p>
+      <p class="footer-copy">© <span id="year">2026</span> i-Exchange</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

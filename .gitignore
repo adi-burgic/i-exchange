@@ -1,0 +1,12 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Vercel CLI
+.vercel
+
+# Dependencies / OS clutter
+node_modules
+.DS_Store
+Thumbs.db
